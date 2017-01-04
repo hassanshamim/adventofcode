@@ -87,3 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+*.idea
+
+# vs code
+extensions.json
+settings.json
