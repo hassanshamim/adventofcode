@@ -1,6 +1,7 @@
 import pytest
 
-from twentysixteen.day1 import calculate_taxi_distance, Coord, Person
+from twentysixteen.day1 import Coord, Person
+from twentysixteen.day1 import calculate_taxi_distance, calculate_taxi_distance2
 
 
 @pytest.mark.parametrize('test_directions,expected', [
@@ -10,6 +11,12 @@ from twentysixteen.day1 import calculate_taxi_distance, Coord, Person
 ])
 def test_examples(test_directions, expected):
     assert calculate_taxi_distance(test_directions) == expected
+
+def test_example_2():
+    instructions = ['R8', 'R4', 'R4', 'R8']
+    expected = 4
+    result = calculate_taxi_distance2(instructions)
+    assert result == expected
 
 
 @pytest.mark.parametrize('current_direction,turn,new_direction', [
@@ -41,3 +48,17 @@ def test_coordinate_multiplication():
     scalar = 3
     expected = Coord(9, -6)
     assert first * scalar == expected
+
+def test_coordinate_path():
+    start = Coord(3, 7)
+    stop = Coord(3, 4)
+    result = start.path_to(stop)
+
+    assert isinstance(result, list)
+    assert all(isinstance(c, Coord) for c in result)
+
+    first, last = result[0], result[-1]
+
+    assert first == start
+    assert last.x == 3
+    assert last.y == 5
