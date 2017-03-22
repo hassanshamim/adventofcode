@@ -1,7 +1,7 @@
 from itertools import repeat
 
 from attr import attrs, attrib
-from common import find_data_file
+from .common import find_data_file
 
 
 def smart_range(start, stop):
@@ -42,8 +42,6 @@ class Coord:
         xs = smart_range(self.x, other.x) or repeat(self.x)
         ys = smart_range(self.y, other.y) or repeat(self.y)
         return [self.__class__(x, y) for x, y in zip(xs, ys)]
-        # return [Coord(3,7), Coord(3,5)]
-
 
 
 @attrs
@@ -110,8 +108,6 @@ def calculate_taxi_distance2(instructions): # Part 2
             if position in visited:
                 return abs(position)
             visited.add(position)
-
-
 
 
 if __name__ == '__main__':
