@@ -21,3 +21,8 @@ def find_data_file():
         return str(input_file)
     else:
         raise FileNotFoundError('Could not locate input file {}'.format(input_file))
+
+def load_data():
+    fpath = find_data_file()
+    for line in open(fpath, 'r'):
+        yield line.strip()
