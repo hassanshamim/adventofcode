@@ -13,24 +13,20 @@ class Bot:
     all_bots = {}
 
     def __init__(self, num):
-        self.id = int(num)
+        self.number = int(num)
         self.chips = []
-        Bot.all_bots[self.id] = self
+        Bot.all_bots[self.number] = self
 
     def __repr__(self):
-        return '<Bot id:{}>'.format(self.id)
+        return '<Bot number:{}>'.format(self.number)
 
     @classmethod
-    def find(cls, id):
-        return cls.all_bots[int(id)]
-
-    @classmethod
-    def get_or_create(cls, id):
-        id = int(id)
+    def get_or_create(cls, number):
+        number = int(number)
         try:
-            return cls.all_bots[id]
+            return cls.all_bots[number]
         except KeyError:
-            return cls(id)
+            return cls(number)
 
     def receives(self, chip):
         self.chips.append(chip)
@@ -39,7 +35,7 @@ class Bot:
         # win condition
         if 61 in self.chips and 17 in self.chips:
             print("WINNER WINNER")
-            print("BOT #", self.id)
+            print("BOT #", self.number)
 
     @property
     def ready(self):
@@ -70,23 +66,19 @@ class Bot:
 
 
 def main1():
-    setup, instructions = [], []
-    for line in load_data():
-        if line.startswith('value'):
-            setup.append(line)
-        else:
-            instructions.append(line)
+    setup = [line for line in load_data() if line.startswith('value')]
+    instructions = [line for line in load_data() if not line.startswith('value')]
 
     for line in setup:
-        words = line.split()
-        val = int(words[1])
-        bot = words[-1]
-        Bot.get_or_create(bot).receives(val)
+        text = line.split()
+        chip = int(text[1])
+        number = text[-1]
+        Bot.get_or_create(number).receives(chip)
 
     while instructions:
         for bot in list(Bot.all_bots.values()):
             if bot.ready:
-                sentinel = 'bot {} gives low'.format(bot.id)
+                sentinel = 'bot {} gives low'.format(bot.number)
                 instruction = extract(instructions, sentinel)
                 text = instruction.split()
                 if text[5] == 'bot':

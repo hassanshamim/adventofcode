@@ -26,6 +26,7 @@ class Screen:
         """
         Rotate row y=A by B: shifts all of the pixels in row A (0 is the top row) right by B pixels.
         Pixels that would fall off the right end appear at the left end of the row.
+
         """
         row = self.data[idx]
         left, right = row[:-positions], row[-positions:]
