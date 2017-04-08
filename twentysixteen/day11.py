@@ -1,83 +1,39 @@
 from collections import namedtuple, deque
 from itertools import combinations, chain
 
-RTGPairOrig = namedtuple('RTGPair', ['chip', 'gen'])
-NUM_FLOORS = 4
 
-class RTGPair:
+class RTGPair(namedtuple('RTGPair', 'chip gen')):
     """
     Like a named tuple but with some convenience methods
     """
-    __slots__ = ('chip', 'gen')
-
-    def __init__(self, chip, gen):
-        self.chip = chip
-        self.gen = gen
-
-    def __repr__(self):
-        return "<RTGPair({}, {})>".format(self.chip, self.gen)
-
-    def __hash__(self):
-        return hash((self.chip, self.gen))
-
-    def __iter__(self):
-        yield self.chip
-        yield self.gen
-
-    def _replace(self, name, value):
-        """
-        Return new RTG object with updated value.
-        """
-        if name == 'chip':
-            return self.__class__(value, self.gen)
-        else:
-            return self.__class__(self.chip, value)
+    __slots__ = ()
 
     def increment(self, attr):
-        return self._replace(attr, getattr(self, attr) + 1)
+        return self._replace(**{attr: getattr(self, attr) + 1})
 
     def decrement(self, attr):
-        return self._replace(attr, getattr(self, attr) - 1)
+        return self._replace(**{attr: getattr(self, attr) - 1})
 
 
-class GameState:
-    def __init__(self, elevator, pairs):
-        self.elevator = elevator
-        self.rtgs = [RTGPair(chip, gen) for chip, gen in pairs]
+class GameState(namedtuple('GameState', 'elevator rtgs')):
+    """
+    Again a namedtuple with some methods for finding neighboring states
+    """
+    __slots__ = ()
+    NUM_FLOORS = 4
 
-    def __iter__(self):
-        return iter(self.as_tuple())
-
-    def __repr__(self):
-        elev, *rtgs = self.as_tuple()
-        return "<GameState({}, {})".format(elev, rtgs)
+    def __new__(cls, elevator, pairs):
+        rtgs = tuple(RTGPair(*pair) for pair in pairs)
+        self = super().__new__(cls, elevator, rtgs)
+        return self
 
     def __hash__(self):
-        # needs to be tuple so its hashable
-        return hash(self.as_tuple())
-
-    def __eq__(self, other):
-        return self.as_tuple() == other.as_tuple()
-
-    def as_tuple(self):
-        return (self.elevator, ) + tuple((chip, gen)
-                                         for chip, gen in self.rtgs)
-
-    def values(self):
-        yield self.elevator
-        yield from chain.from_iterable(self.rtgs)
-
-    @property
-    def generators(self):
-        return [rtg.gen for rtg in self.rtgs]
-
-    @property
-    def chips(self):
-        return [rtg.chip for rtg in self.rtgs]
-
-    @classmethod
-    def floor_valid(cls, piece):
-        return 1 <= piece <= NUM_FLOORS
+        """
+        position of pairs is all that matters, not which pairs are where
+        So we sort before hashing to reduce possible gamestates space.
+        May not matter when we move to priority queue.
+        """
+        return hash((self.elevator, ) + tuple(sorted(self.rtgs)))
 
     @property
     def valid(self):
@@ -87,12 +43,18 @@ class GameState:
 
         Also check floors are within bounds - doing that here rather than neigbhor state generator
         """
-        gens = set(self.generators)
-        pieces_on_valid_floors = all(1 <= piece <= NUM_FLOORS for piece in self.values())
-        no_fried_chips = all(rtg.chip == rtg.gen or rtg.chip not in gens
+        floors_with_generators = set(rtg.gen for rtg in self.rtgs)
+        pieces_on_valid_floors = all(1 <= piece <= self.NUM_FLOORS
+                                     for piece in self.values())
+        no_fried_chips = all(rtg.chip == rtg.gen or
+                             rtg.chip not in floors_with_generators
                              for rtg in self.rtgs)
 
         return no_fried_chips and pieces_on_valid_floors
+
+    def values(self):
+        yield self.elevator
+        yield from chain(*self.rtgs)
 
     def replace(self, pieces, adjustment):
         """
@@ -101,7 +63,7 @@ class GameState:
         adjustment is either 1 or -1
         """
         elevator = self.elevator + adjustment
-        rtgs = self.rtgs[:]
+        rtgs = list(self.rtgs)
         adjust = RTGPair.increment if adjustment == 1 else RTGPair.decrement
         for idx, piece in pieces:
             rtg = rtgs[idx]
@@ -133,34 +95,10 @@ class GameState:
                 yield state
 
 
-puzzle_input = GameState(
-    1,  #elevator
-    [ # Chip, Gen
-        (2, 1),  # Polonium
-        (1, 1),  # Thulium
-        (2, 1),  # Promethium
-        (1, 1),  # ruthenium
-        (1, 1),  # cobalt
-    ]
-)
-
-GOAL = GameState(
-    4,
-    [
-        (4, 4),  # Polonium
-        (4, 4),  # Thulium
-        (4, 4),  # Promethium
-        (4, 4),  # ruthenium
-        (4, 4),  # cobalt
-    ])
-NUM_FLOORS = 4
-
-
-
-def BFS(state, verbose=False):
+def BFS(start, goal, verbose=False):
     depth = -1
     next_level = deque()
-    next_level.append(state)
+    next_level.append(start)
     visited = set()
 
     while True:
@@ -174,28 +112,86 @@ def BFS(state, verbose=False):
         while current_level:
             state = current_level.popleft()
 
-            if state == GOAL:
+            if state == goal:
                 return depth
             if hash(state) not in visited:
-                next_level.extend(state.valid_neighbor_states())
                 visited.add(hash(state))
+                next_level.extend(state.valid_neighbor_states())
                 if verbose:
                     print('now have seen', len(visited), 'gamestates')
 
 
+puzzle_input1 = GameState(
+    1,  #elevator
+    [ # Chip, Gen
+        (2, 1),  # Polonium
+        (1, 1),  # Thulium
+        (2, 1),  # Promethium
+        (1, 1),  # ruthenium
+        (1, 1),  # cobalt
+    ]
+)
+puzzle_input2 = GameState(
+    1,  #elevator
+    [ # Chip, Gen
+        (2, 1),  # Polonium
+        (1, 1),  # Thulium
+        (2, 1),  # Promethium
+        (1, 1),  # ruthenium
+        (1, 1),  # cobalt
+        (1, 1),  # Part 2
+        (1, 1),  # Part 2
+    ]
+)
+
+GOAL1 = GameState(
+    4,
+    [
+        (4, 4),  # Polonium
+        (4, 4),  # Thulium
+        (4, 4),  # Promethium
+        (4, 4),  # ruthenium
+        (4, 4),  # cobalt
+    ])
+GOAL2 = GameState(
+    4,
+    [
+        (4, 4),  # Polonium
+        (4, 4),  # Thulium
+        (4, 4),  # Promethium
+        (4, 4),  # ruthenium
+        (4, 4),  # cobalt
+        (4, 4),  # Part 2
+        (4, 4),  # Part 2
+    ])
+
+
 def main1():
-    current = puzzle_input
-    smallest = BFS(current, verbose=True)
+    """
+    Result from BFS:
+    ------------------------
+    starting level 47
+    now have seen 158161 gamestates
+    now have seen 158162 gamestates
+    minimum steps to goal: 47
+
+    BFS with sort before hashing:
+    ------------------------
+    starting level 47
+    now have seen 4331 gamestates
+    minimum steps to goal: 47
+    """
+    smallest = BFS(puzzle_input1, GOAL1, verbose=True)
+    print('minimum steps to goal:', smallest)
+
+
+def main2():
+    smallest = BFS(puzzle_input2, GOAL2, verbose=True)
+
+    print('Part 2:')
     print('minimum steps to goal:', smallest)
 
 
 if __name__ == '__main__':
     main1()
-'''
-Can encode data like: [Elevfloor, (gen1floor, chip1floor), (gen2floor, chip2loor) ]
-Ideal state: [4, (4,4),(4,4)] etc
-The first floor contains a polonium generator, a thulium generator, a thulium-compatible microchip, a promethium generator, a ruthenium generator, a ruthenium-compatible microchip, a cobalt generator, and a cobalt-compatible microchip.
-The second floor contains a polonium-compatible microchip and a promethium-compatible microchip.
-The third floor contains nothing relevant.
-The fourth floor contains nothing relevant.
-'''
+    # main2()
