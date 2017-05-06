@@ -96,6 +96,9 @@ class GameState(namedtuple('GameState', 'elevator rtgs')):
 
 
 def BFS(start, goal, verbose=False):
+    """
+    We want the minimum steps, so breadth-first it is
+    """
     depth = -1
     next_level = deque()
     next_level.append(start)
