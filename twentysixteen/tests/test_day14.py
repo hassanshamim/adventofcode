@@ -11,7 +11,7 @@ def test_generate_hash():
 def test_known_valid():
     salt = 'abc'
     hsh = generate_hash(salt, 39)
-    assert find_repeating_chars(hsh) == 'e',
+    assert find_repeating_chars(hsh) == 'e'
     assert valid_key(salt, index=39)
 
     assert 'eeeee' in generate_hash(salt, 816)
