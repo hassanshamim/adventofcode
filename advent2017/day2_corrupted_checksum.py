@@ -2,9 +2,7 @@ from itertools import combinations
 
 from common import puzzle_input
 
-
-def prepare(row: str):
-    return [int(num) for num in row.split()]
+PUZZLE_INPUT = [[int(num) for num in row.split()] for row in puzzle_input(2)]
 
 
 def find_quotient(nums: list):
@@ -14,15 +12,13 @@ def find_quotient(nums: list):
             return result
 
 
-def part1(data=puzzle_input(2)):
-    nums = [prepare(row) for row in data]
-    result = sum(max(row) - min(row) for row in nums)
+def part1(data=PUZZLE_INPUT):
+    result = sum(max(row) - min(row) for row in data)
     return result
 
 
-def part2(data=puzzle_input(2)):
-    nums = [prepare(row) for row in data]
-    result = sum(find_quotient(row) for row in nums)
+def part2(data=PUZZLE_INPUT):
+    result = sum(find_quotient(row) for row in data)
     return result
 
 
