@@ -3,6 +3,7 @@ from common import puzzle_input
 
 PUZZLE_INPUT = puzzle_input(1)[0]
 
+
 def circular_chunk(it: str):
     """
     yields it[0], it[1]: it[1], it[2]:, it[2], it[3]... it[n-2], it[n-1]
@@ -12,6 +13,7 @@ def circular_chunk(it: str):
     next(b)
     yield from zip(a, b)
     yield it[-1], it[0]
+
 
 def halfway_chunk(it: str):
     """
@@ -30,22 +32,11 @@ def part1(data):
     result = sum(only_same)
     return result
 
+
 def part2(data):
-    """
-    """
-    chunks = halfway_chunk(data)
-    only_same = [int(a) for a, b in chunks if a == b]
-    result = sum(only_same)
-    return result
-
-
-assert part2('1212') == 6
-assert part2('1221') == 0
-assert part2('123425') == 4
-assert part2('123123') == 12
-
+    return sum(int(a) for a, b in halfway_chunk(data) if a == b)
 
 
 if __name__ == '__main__':
     print('PART 1:', part1(PUZZLE_INPUT))
-    print('PART 1:', part2(PUZZLE_INPUT))
+    print('PART 2:', part2(PUZZLE_INPUT))
