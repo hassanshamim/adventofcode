@@ -75,14 +75,14 @@ def next_password(pw):
 
 def valid(pw):
     return rule_one(pw) and rule_two(pw) and rule_three(pw)
-    
+
 def next_word(pw):
     ''' if input word is not valid, calculate the next valid word by rule 2.
         Not necessarily a valid password
     '''
     if not any(char in pw for char in FORBIDDEN):
         return pw
-        
+
     replacements = {'i': 'j', 'o': 'p', 'l': 'm'}
     for char in replacements:
         i = pw.find(char)
@@ -90,7 +90,7 @@ def next_word(pw):
             continue
         pw = pw[:i] + replacements[pw[i]] +  'a' * len(pw[i+1:])
     return pw
-    
+
 
 
 def main():
@@ -99,10 +99,10 @@ def main():
         start_pw = argv[1]
     else:
         start_pw = 'hepxcrrq'
-    
+
     if not valid(start_pw):
         start_pw = next_word(start_pw)
-    
+
     new_pw = next_password(start_pw)
     print('New valid password is:', new_pw)
 
