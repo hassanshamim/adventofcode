@@ -1,7 +1,7 @@
 from itertools import repeat
 
 from attr import attrs, attrib
-from common import find_data_file
+from .common import find_data_file
 
 
 def smart_range(start, stop):

@@ -10,10 +10,6 @@ def direction_maker(guard=None, adjustment=None):
     def func(key):
         if key not in guard:
             return key + adjustment
-        return key
-
-    return func
-
 
 KEYPAD_INSTRUCTIONS = {
     'U': direction_maker(guard=[1, 2, 3], adjustment=-3),
@@ -26,24 +22,22 @@ KEYPAD_INSTRUCTIONS = {
 def generate_bathroom_code(data, verbose=False):
     out = ''
 
-    current = 5  # We start at 5 key
+    current = 5 # We start at 5 key
 
     for line in data:
         for direction in line:
             new = KEYPAD_INSTRUCTIONS[direction](current)
             if new != current:
                 if verbose:
-                    msg = 'Moving "{}" from {} to {}'.format(
-                        direction, current, new)
-                    print(msg)
+                   msg = 'Moving "{}" from {} to {}'.format(direction, current, new)
+                   print(msg)
                 current = new
             else:
                 if verbose:
-                    msg = 'Cannot move "{}" from {}'.format(direction, current)
-                    print(msg)
+                   msg = 'Cannot move "{}" from {}'.format(direction, current)
+                   print(msg)
         out += str(current)
     return out
-
 
 def main1():
     with open(find_data_file()) as f:
@@ -60,9 +54,7 @@ def ignore(*keys):
             if key in keys:
                 return key
             return func(key)
-
         return func_wrapper
-
     return direction_decorator
 
 
@@ -96,26 +88,23 @@ def generate_bathroom_code2(data, verbose=False):
 
     def get_keycode(position):
         # print(position)
-        return keycodes[position - 1]
-
+        return keycodes[position-1]
     out = ''
 
-    current = 5  # We start at 5 key
+    current = 5 # We start at 5 key
 
     for line in data:
         for direction in line:
             new = instructions[direction](current)
             if new != current:
                 if verbose:
-                    msg = 'Moving "{}" from {} to {}'.format(
-                        direction, get_keycode(current), get_keycode(new))
-                    print(msg)
+                   msg = 'Moving "{}" from {} to {}'.format(direction, get_keycode(current), get_keycode(new))
+                   print(msg)
                 current = new
             else:
                 if verbose:
-                    msg = 'Cannot move "{}" from {}'.format(
-                        direction, get_keycode(current))
-                    print(msg)
+                   msg = 'Cannot move "{}" from {}'.format(direction, get_keycode(current))
+                   print(msg)
         out += get_keycode(current)
     return out
 

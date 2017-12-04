@@ -24,5 +24,6 @@ def find_data_file():
 
 
 def load_data():
-    with open(find_data_file()) as f:
-        yield from f
+    fpath = find_data_file()
+    for line in open(fpath, 'r'):
+        yield line.strip()
