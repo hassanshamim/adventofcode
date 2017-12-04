@@ -10,9 +10,6 @@ def direction_maker(guard=None, adjustment=None):
     def func(key):
         if key not in guard:
             return key + adjustment
-        else:
-            return key
-    return func
 
 KEYPAD_INSTRUCTIONS = {
     'U': direction_maker(guard=[1, 2, 3], adjustment=-3),
@@ -20,6 +17,7 @@ KEYPAD_INSTRUCTIONS = {
     'R': direction_maker(guard=[3, 6, 9], adjustment=1),
     'L': direction_maker(guard=[1, 4, 7], adjustment=-1),
 }
+
 
 def generate_bathroom_code(data, verbose=False):
     out = ''
@@ -59,11 +57,13 @@ def ignore(*keys):
         return func_wrapper
     return direction_decorator
 
+
 @ignore(1, 2, 4, 5, 9)
 def up(key):
     if key in (3, 13):  # D is 13
         return key - 2
     return key - 4
+
 
 @ignore(5, 9, 10, 12, 13)
 def down(key):
@@ -71,13 +71,16 @@ def down(key):
         return key + 2
     return key + 4
 
+
 @ignore(1, 2, 5, 10, 13)
 def left(key):
     return key - 1
 
+
 @ignore(1, 4, 9, 12, 13)
 def right(key):
     return key + 1
+
 
 def generate_bathroom_code2(data, verbose=False):
     keycodes = '123456789ABCD'
@@ -86,7 +89,6 @@ def generate_bathroom_code2(data, verbose=False):
     def get_keycode(position):
         # print(position)
         return keycodes[position-1]
-
     out = ''
 
     current = 5 # We start at 5 key
@@ -119,7 +121,6 @@ def main2():
 
     result = generate_bathroom_code2(data)
     print('bathroom code is actually', result)
-
 
 
 if __name__ == '__main__':

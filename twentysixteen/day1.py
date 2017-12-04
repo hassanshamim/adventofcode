@@ -10,7 +10,7 @@ def smart_range(start, stop):
 
 
 @attrs
-class Coord:
+class Coord(object):
     x = attrib(default=0)
     y = attrib(default=0)
 
@@ -28,6 +28,9 @@ class Coord:
 
     def __abs__(self):
         return abs(self.x) + abs(self.y)
+
+    def __hash__(self):
+        return hash((self.x, self.y))
 
     def path_to(self, other):
         """
