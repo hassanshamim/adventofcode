@@ -10,7 +10,7 @@ def smart_range(start, stop):
 
 
 @attrs
-class Coord:
+class Coord(object):
     x = attrib(default=0)
     y = attrib(default=0)
 
@@ -29,6 +29,9 @@ class Coord:
     def __abs__(self):
         return abs(self.x) + abs(self.y)
 
+    def __hash__(self):
+        return hash((self.x, self.y))
+
     def path_to(self, other):
         """
         returns List of Coordinates in between self and other
@@ -42,8 +45,6 @@ class Coord:
         xs = smart_range(self.x, other.x) or repeat(self.x)
         ys = smart_range(self.y, other.y) or repeat(self.y)
         return [self.__class__(x, y) for x, y in zip(xs, ys)]
-        # return [Coord(3,7), Coord(3,5)]
-
 
 
 @attrs
@@ -110,8 +111,6 @@ def calculate_taxi_distance2(instructions): # Part 2
             if position in visited:
                 return abs(position)
             visited.add(position)
-
-
 
 
 if __name__ == '__main__':
