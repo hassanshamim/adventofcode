@@ -1,4 +1,8 @@
+from itertools import cycle, product
+
 PUZZLE_INPUT = 347991
+
+Coord = complex
 
 
 def find_ring(n):
@@ -39,9 +43,53 @@ def part1(num=PUZZLE_INPUT):
     return (ring // 2) + distance
 
 
+def spiral_coords():
+    """
+    Generator of coordinates in spiral starting from origin (0,0)
+    """
+    LEFT = Coord(-1, 0)
+    RIGHT = Coord(1, 0)
+    UP = Coord(0, 1)
+    DOWN = Coord(0, -1)
+
+    current = Coord(0, 0)
+    steps = 1
+
+    yield current
+
+    for group in cycle([[RIGHT, UP], [LEFT, DOWN]]):
+        for direction in group:
+            for i in range(steps):
+                current += direction
+                yield current
+        steps += 1
+
+
+def neighbors(coord):
+    return {coord + Coord(*xy) for xy in product([-1, 0, 1], repeat=2)}
+
+
+def part2(num=PUZZLE_INPUT):
+    """Just straight up builds the spiral because I don't see any better ways"""
+    # loop through spiral
+    #   sum neighbors in seen or set val to 1
+    #   add coord to seen
+    #   stop if value is > num
+    seen = dict()
+    spiral = spiral_coords()
+    seen[next(spiral)] = 1
+    for coord in spiral:
+        value = sum(seen.get(adjacent, 0) for adjacent in neighbors(coord))
+        seen[coord] = value
+        if value > num:
+            return value
+
+
 if __name__ == '__main__':  # Examples
     assert part1(1) == 0
     assert part1(12) == 3
     assert part1(23) == 2
     assert part1(1024) == 31
     print('part 1 result:', part1())
+
+    print('part2 results:', part2())
