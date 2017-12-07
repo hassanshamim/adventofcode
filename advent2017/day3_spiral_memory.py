@@ -1,4 +1,4 @@
-from itertools import cycle, product
+commfrom itertools import cycle, product
 
 PUZZLE_INPUT = 347991
 

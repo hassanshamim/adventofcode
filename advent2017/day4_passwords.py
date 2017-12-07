@@ -12,6 +12,7 @@ def part2(data=puzzle_input(4)):
         wordlist = [cat(sorted(word)) for word in wordlist]
         return len(wordlist) == len(set(wordlist))
     return sum(map(valid, [line.split() for line in data]))
+
 if __name__ == '__main__':
     print(part1())
     print(part2())
