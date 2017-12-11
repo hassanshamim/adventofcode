@@ -12,6 +12,7 @@ operations = {
     '<': operator.lt,
     '<=': operator.le,
 }
+
 def part1(data=PUZZLE_INPUT):
     registers = defaultdict(int)
     for line in data:
@@ -57,3 +58,4 @@ def part2(data=PUZZLE_INPUT):
 if __name__ == '__main__':
     print('Part 1 result:', part1())
     print('Part 2 result:', part2())
+
