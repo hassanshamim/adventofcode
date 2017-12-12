@@ -93,3 +93,5 @@ ENV/
 # vs code
 extensions.json
 settings.json
+.vscode/
+tags
