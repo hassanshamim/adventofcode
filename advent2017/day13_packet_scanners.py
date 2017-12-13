@@ -7,10 +7,7 @@ def scanner_on_top(rnge, turn=0):
     if rnge == 0:
         return False
     trip_time = (rnge - 1) * 2
-    if turn >= trip_time:
-        return turn % trip_time == 0
-    else:
-        return turn == 0
+    return turn % trip_time == 0
 
 
 def part1(data=PUZZLE_INPUT):
