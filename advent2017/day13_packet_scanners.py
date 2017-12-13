@@ -1,12 +1,6 @@
-from common import puzzle_input
+from common import puzzle_input, parse_int
 
-
-def parse(line):
-    k, v = line.split(': ')
-    return int(k), int(v)
-
-
-PUZZLE_INPUT = dict(map(parse, puzzle_input(13)))
+PUZZLE_INPUT = dict(map(parse_int, puzzle_input(13)))
 
 
 def scanner_on_top(rnge, turn=0):

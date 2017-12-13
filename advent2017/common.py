@@ -1,6 +1,11 @@
 from pathlib import Path
+import re
 
 from collections import UserList
+
+
+def parse_int(line):
+    return tuple(map(int, re.findall(r'\d+', line)))
 
 
 def puzzle_input(day):
