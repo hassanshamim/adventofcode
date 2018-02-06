@@ -4,8 +4,7 @@ import re
 
 
 def parse_int(line):
-    return tuple(map(int, re.findall(r'\d+', line)))
-
+    return tuple(map(int, re.findall(r'-?\d+', line)))
 
 def puzzle_input(day):
     input_file_name = f"day{day}_input.txt"
