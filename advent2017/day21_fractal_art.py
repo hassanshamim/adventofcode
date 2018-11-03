@@ -18,9 +18,10 @@ def parse_input():
 
     return translations
 
+
 PIXEL_ON = "#"
 PIXEL_OFF = "."
-PUZZLE_START = '.#./..#/###'
+PUZZLE_START = ".#./..#/###"
 
 
 class Grid:
@@ -71,7 +72,7 @@ class Grid:
         size = int(math.sqrt(len(grids)))
         for row_of_grids in chunks(grids, size):
             # append the grids' rows together
-            rows = [''.join(row) for row in zip(*row_of_grids)]
+            rows = ["".join(row) for row in zip(*row_of_grids)]
             result += "/".join(rows)
             result += "/"
 
@@ -98,7 +99,7 @@ class Grid:
             # ERROR HERE
             temp = [tuple(chunks(row, N)) for row in nrows]
             aligned = list(zip(*temp))
-            new_grids = ['/'.join(segment) for segment in aligned]
+            new_grids = ["/".join(segment) for segment in aligned]
             for grid in new_grids:
                 result.append(Grid(grid))
 
@@ -126,16 +127,15 @@ def part1(iterations=5):
                 if str(permutation) in translations:
                     grids.append(translations[str(permutation)])
                     break
-            else: # no valid permutation found!
-                raise ValueError(f'Cannot find matching translation for grid {str(item)}')
+            else:  # no valid permutation found!
+                raise ValueError(
+                    f"Cannot find matching translation for grid {str(item)}"
+                )
 
     # find how many are left on
     return sum(str(grid).count(PIXEL_ON) for grid in grids)
 
 
-
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("Part 1", part1())
     print("Part 2", part1(18))
